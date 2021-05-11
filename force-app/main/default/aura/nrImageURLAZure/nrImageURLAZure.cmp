@@ -1,0 +1,22 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"
+				controller = "NRImageURLAzureService">
+    <aura:attribute name = "contents" type = "ContentVersion"/>
+    <!--<aura:attribute name = "contents" type = "String[]"/>-->
+    <force:recordData
+        fields="Name, Email, UserType"
+        recordId="{!$SObjectType.CurrentUser.Id}"
+        targetFields="{!v.currentUser}"
+        mode="EDIT"
+    />
+    <aura:handler name ="init" value ="{!this}" action = "{!c.doInit}"/>
+    <div class ="slds-col slds-size_3-of-3">        
+                <lightning:carousel disableAutoRefresh="false" disableAutoScroll="false">
+                    <aura:iteration items="{!v.contents}" var="content">
+                        <lightning:carouselImage
+                                                 src = "{!content}"
+                                                 description = "{!content}">
+                        </lightning:carouselImage>  
+                    </aura:iteration>   
+                </lightning:carousel>
+            </div>
+</aura:component>

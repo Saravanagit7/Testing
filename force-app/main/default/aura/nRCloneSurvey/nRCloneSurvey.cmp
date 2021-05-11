@@ -1,0 +1,19 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,lightning:actionOverride,force:hasRecordId,force:hasSObjectName"
+                controller="NRCloneSurveyController">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="isReadyToClone" type="boolean" default="false"/>    
+    <aura:attribute name="assetId" type="String"/>
+    <aura:attribute name="surveyType" type="String"/>
+    
+    <aura:attribute name="Spinner" type="Boolean" default="false" access="global"/>
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:if isTrue="{!v.Spinner}">
+        <lightning:spinner variant="brand" size="large"/>
+    </aura:if>
+
+    <aura:if isTrue="{!v.isReadyToClone}">
+        <c:nRCloneSurveyFromWO assetRecId="{!v.assetId}" woRecId="{!v.recordId}" survTyp="{!v.surveyType}" onclose="{!c.handleClose}"></c:nRCloneSurveyFromWO>
+    </aura:if>
+
+</aura:component>

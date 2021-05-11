@@ -1,0 +1,5 @@
+<design:component >
+	<design:attribute name="Component1" label="Component1" />
+    <design:attribute name="Component2" label="Component2" />
+    <design:attribute name="Component3" label="Component3" />
+</design:component>

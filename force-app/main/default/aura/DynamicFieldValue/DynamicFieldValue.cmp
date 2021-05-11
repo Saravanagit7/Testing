@@ -1,0 +1,15 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name='record' type='Object'/>
+    <aura:attribute name='fieldName' type='String'/>
+    <aura:attribute name='fieldValue' type='String'/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="isImage" type='Boolean' default="false"/>
+    <aura:renderif isTrue="{!v.record}">
+        <aura:renderif isTrue="{!v.isImage}">
+            <img src="{!v.fieldValue}"  width="100" height="100"/>    
+            <aura:set attribute="else">
+                <div style="word-break:break-all;width:125px;" class="slds-cell-wrap" title="{!v.fieldName}">{!v.fieldValue}</div>                
+            </aura:set>
+        </aura:renderif>
+    </aura:renderif>
+</aura:component>

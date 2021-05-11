@@ -1,0 +1,102 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"
+                controller = "NRSurveyImageryAuraService">
+    <aura:attribute name = "contents" type = "ContentVersion"/>
+    <aura:attribute name="surveyId" type="String"/>
+    <aura:attribute name="prefixURL" type="String" default="/sfc/servlet.shepherd/version/download/"/>
+    <aura:attribute name="currentUser" type="User" />
+    <aura:attribute name="incrementOperator" type="Integer" default='0'/>
+    <aura:attribute name="isAreaSelected" type="Boolean" default='false'/>
+    <aura:attribute name="varTabIndex" type="Integer" default='-1'/>
+    <aura:attribute name = "contentEventId" type = "String"/>
+    <aura:attribute name = "setTransform" type = "String" default='0' />
+    <aura:attribute name = "indexOfImage" type = "Integer"/>
+    <aura:attribute name="isAriaPressed" type="Boolean" default='false'/>
+    <aura:attribute name="Spinner" type="Boolean" default="false" access="global"/>
+    <force:recordData
+                      fields="Name, Email, UserType"
+                      recordId="{!$SObjectType.CurrentUser.Id}"
+                      targetFields="{!v.currentUser}"
+                      mode="EDIT"
+                      />
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:handler name ="init" value ="{!this}" action = "{!c.doInit}"/>
+    <aura:if isTrue = "{!v.contents.length > 0}">
+        <div class="slds-carousel" data-ride="carousel">        
+            <div class="slds-carousel__stage">
+                <!--<span class="slds-carousel__autoplay">
+                    <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" 
+                            aria-pressed="{!v.isAriaPressed}" title="Stop auto-play" onclick="{!c.setAriaPressed}">
+                        <svg class="slds-button__icon" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#pause"></use>
+                    </svg>
+                        <aura:if isTrue="{!!v.isAriaPressed}">
+                            <lightning:icon iconName="utility:pause" size="x-small" class="slds-icon_container slds-icon-utility-pause"/>
+                            <aura:set attribute = "else">
+                                <lightning:icon iconName="utility:right" size="x-small" class="slds-icon_container slds-icon-utility-right"/>
+                            </aura:set>
+                        </aura:if>
+                        <span class="slds-assistive-text">Stop auto-play</span>
+                    </button>
+                </span>-->
+                <div class="slds-carousel__panels" style="{!'transform:translateX(' + v.setTransform +'%' +')'}">
+                    <aura:iteration items="{!v.contents}" var="content" indexVar = "index"> 
+                        <aura:if isTrue = "{!v.isAreaSelected}">
+                            <div id="{!content.Id}" class="slds-carousel__panel" role="tabpanel" aria-hidden="false" aria-labelledby="{!content.Id}">
+                                <a href="javascript:void(0);" class="slds-carousel__panel-action slds-text-link_reset" tabindex="0">
+                                    <div class="slds-carousel__image">
+                                        <img src="{!v.prefixURL + content.Id}"/>
+                                    </div>
+                                    <div class = "slds-p-around_small">
+                                        <lightning:textarea aura:id = "imgDesc" name="imgCmnt" label="Image Comment: " value="{!content.Description}"/>
+                                        <lightning:button name = "{!content.Description}"  value = "{!content.Id}"  variant="brand" label="Save Comment" title="Save Image Comment" onclick="{!c.handleSave}" />
+                                    </div>
+                                </a>
+                            </div>
+                            <aura:set attribute ="else">
+                                <div id="{!content.Id}" class="slds-carousel__panel" role="tabpanel" aria-hidden="true" aria-labelledby="{!content.Id}">
+                                    <a href="javascript:void(0);" class="slds-carousel__panel-action slds-text-link_reset" tabindex="-1">
+                                        <div class="slds-carousel__image">
+                                            <img src="{!v.prefixURL + content.Id}"/>
+                                        </div>
+                                        <div class = "slds-p-around_small">
+                                            <lightning:textarea aura:id = "imgDesc" name="imgCmnt" label="Image Comment: " value="{!content.Description}"/>                                    
+                                            <lightning:button name = "{!content.Description}" variant="brand" label="Save Comment" title="Save Image Comment" value="{!content.Id}" onclick="{!c.handleSave}" />
+                                        </div>
+                                    </a>
+                                </div> 
+                            </aura:set>
+                        </aura:if>                    
+                    </aura:iteration> 
+                </div>             
+                <ul class="slds-carousel__indicators" role="tablist">
+                    <aura:iteration items="{!v.contents}" var="content" indexVar = "index">
+                        <!--<aura:if isTrue = "{!v.contentEventId == content.Id}">-->
+                        <aura:if isTrue = "{!v.contentEventId == content.Id}">    
+                            <li class="slds-carousel__indicator" role="presentation">                    
+                                <a id="{!content.Id}" class="slds-carousel__indicator-action slds-is-active " 
+                                   href="javascript:void(0);" role="tab" tabindex="0" 
+                                   aria-selected="true" aria-controls="{!content.Id}"
+                                   onclick = "{!c.setAreaSelected}" data-record = "{!index}"> 
+                                </a>                    
+                            </li>
+                            <aura:set attribute = "else">
+                                <li class="slds-carousel__indicator" role="presentation">                    
+                                    <a id="{!content.Id}" class="slds-carousel__indicator-action" 
+                                       href="javascript:void(0);" role="tab" tabindex="-1" 
+                                       aria-selected="false" aria-controls="{!content.Id}"
+                                       onclick = "{!c.setAreaSelected}" data-record = "{!index}">    
+                                    </a>                    
+                                </li>
+                            </aura:set>
+                        </aura:if>
+                    </aura:iteration>
+                </ul>
+            </div>
+        </div>
+        <aura:set attribute="else">
+            <br/>
+            <b>Sorry! There are no Survey Images uploaded yet.</b>
+        </aura:set>
+    </aura:if>
+</aura:component>

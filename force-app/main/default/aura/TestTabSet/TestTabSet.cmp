@@ -1,0 +1,20 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <aura:attribute name="search" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="profileMenu" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="navBar" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="Component1" type="String" />
+    <aura:attribute name="Component2" type="String" />
+    <aura:attribute name="Component3" type="String" />
+    
+	    <lightning:tabset>
+        <lightning:tab label="Item One">
+             {!v.search}
+        </lightning:tab>
+        <lightning:tab label="Item Two" title="2nd tab extended title">
+            {!v.profileMenu}
+        </lightning:tab>
+        <lightning:tab label="Item Three">
+            {!v.navBar}
+        </lightning:tab>
+    </lightning:tabset>
+</aura:component>

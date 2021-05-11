@@ -1,0 +1,22 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"
+                controller = "NRSurveyImageryAuraService">
+    <aura:attribute name="latitude" type="Decimal"/>
+    <aura:attribute name="longitude" type="Decimal"/>
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+     <!--<lightning:inputAddress
+        addressLabel="Address"
+        streetLabel="Street"
+        cityLabel="City"
+        countryLabel="Country"
+        provinceLabel="State"
+        postalCodeLabel="Zip Code"
+        street="1 Market St."
+        city="San Francisco"
+        country="US"
+        province="CA"
+        postalCode="94105"
+        showAddressLookup="true" />-->
+        Latitude : {!v.latitude}<br/>
+    	Longitude : {!v.longitude}<br/>
+   
+</aura:component>

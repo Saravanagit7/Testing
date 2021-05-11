@@ -1,0 +1,15 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"
+                controller = "NRImageUploadController">
+    <aura:attribute name="filetype" type="List" default="['.png', '.jpg', '.jpeg']" />
+    <aura:attribute name="multiple" type="Boolean" default="true" />
+    <aura:attribute name="disabled" type="Boolean" default="true" />
+    <aura:attribute name="recordId" type="String" />
+    <lightning:card title="Upload Image" iconName="doctype:image">
+        <lightning:fileUpload label="Attach Image"
+            name="fileUploader"
+            multiple="true"
+            accept="{!v.filetype}"
+            recordId="{!v.recordId}"
+            onuploadfinished="{!c.handleUploadFinished}"/>
+    </lightning:card>
+</aura:component>

@@ -1,0 +1,18 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,lightning:actionOverride,force:hasRecordId,force:hasSObjectName"
+                controller="NRCreateSurveyController">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="isReadyToCreateSurvey" type="boolean" default="false"/>
+    
+    <aura:attribute name="Spinner" type="Boolean" default="false" access="global"/>
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:if isTrue="{!v.Spinner}">
+        <lightning:spinner variant="brand" size="large"/>
+    </aura:if>
+
+    <aura:if isTrue="{!v.isReadyToCreateSurvey}">
+       <!-- <c:nRCreateSurvey recId="{!v.recordId}" objApiNm="{!v.sObjectName}" surveyObjApiNm="NR_Site_Survey__c" parentFldApiNm="NR_Work_Order__c"></c:nRCreateSurvey> -->
+        <c:nRCreateSurveyQuesPage recId="{!v.recordId}" objApiNm="{!v.sObjectName}" surveyObjApiNm="NR_Site_Survey__c" parentFldApiNm="NR_Work_Order__c"></c:nRCreateSurveyQuesPage> 
+    </aura:if>
+
+</aura:component>

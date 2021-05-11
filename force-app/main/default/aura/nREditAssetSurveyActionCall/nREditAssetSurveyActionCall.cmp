@@ -1,0 +1,10 @@
+<aura:component implements="force:lightningQuickAction,lightning:actionOverride,force:hasRecordId,force:hasSObjectName"
+                controller="NREditAssetSurveyController">
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:attribute name="isReadyToEdit" type="boolean" default="false"/>
+
+    <aura:if isTrue="{!v.isReadyToEdit}">
+        <c:nREditAssetSurvey astSrvRecordId="{!v.recordId}" astSrvObjectApiName="{!v.sObjectName}" isModalOpen="true" oncloseclicked="{!c.handleCloseFromParent}"></c:nREditAssetSurvey>
+    </aura:if>
+</aura:component>

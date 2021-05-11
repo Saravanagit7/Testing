@@ -1,0 +1,10 @@
+<aura:component implements="force:lightningQuickAction,lightning:actionOverride,force:hasRecordId,force:hasSObjectName"
+                controller="NREditBlockSurveyController">
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:attribute name="isReadyToEdit" type="boolean" default="false"/>
+
+    <aura:if isTrue="{!v.isReadyToEdit}">
+        <c:nREditBlockSurvey blockRecordId="{!v.recordId}" blockObjectApiName="{!v.sObjectName}" isModalOpen="true" oncloseclicked="{!c.handleCloseFromParent}"></c:nREditBlockSurvey>
+    </aura:if>
+</aura:component>

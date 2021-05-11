@@ -1,0 +1,148 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"
+                controller = "NRAssetImageryAuraService">
+    <aura:attribute name = "assetImageList" type = "NR_Image_Reference__c[]"/>
+    <aura:attribute name = "contents" type = "List" default= "[]"/>
+    <aura:attribute name="prefixURL" type="String"/>
+    <aura:attribute name="imageComment" type ="String" default="Image Comment: "/>
+    <aura:attribute name="Spinner" type="Boolean" default="false" access="global"/>
+    <aura:attribute name ="isImageExist" type = "Boolean" default="false"/>
+    <aura:attribute name="surveyName" type="String"/>
+    <aura:attribute name="surveyId" type="String"/>
+    <aura:attribute name="siteName" type="String"/>
+    <aura:attribute name="blockName" type="String"/>
+    <aura:attribute name="locationName" type="String"/>
+    <aura:attribute name="assetName" type="String"/>
+    <aura:attribute name="recordType" type="String"/>
+    <aura:attribute name="uploadDate" type="DateTime"/>
+    <aura:attribute name ="showSiteSection" type = "Boolean" default = "false"/>
+    <aura:attribute name ="showBlockSection" type = "Boolean" default = "false"/>
+    <aura:attribute name ="showLocationSection" type = "Boolean" default = "false"/>
+    <aura:attribute name ="showAssetSection" type = "Boolean" default = "false"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    <aura:attribute name="activeSections" type="String"/>
+    <lightning:navigation aura:id="navService"/>
+    <aura:handler name ="init" value ="{!this}" action = "{!c.doInit}"/>
+   <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:if isTrue="{!v.Spinner}">
+        <lightning:spinner variant="brand" size="large"/>
+    </aura:if>
+    <aura:if isTrue = "{!v.isImageExist}">
+        <div class ="slds-p-around_small">
+            <lightning:accordion aura:id="accordion" allowMultipleSectionsOpen = "true">
+                <lightning:accordionSection name="Defect Review" label="Image Details">
+                    <aura:set attribute="body">
+                        <aura:if isTrue = "{!v.showSiteSection}" >
+                            <div class = "slds-grid slds-wrap">
+                                <div class ="slds-col slds-size_1-of-2">
+                                    <b> Upload Date </b> : <lightning:formattedDateTime aura:id="dt"
+                                                                                        value="{!v.uploadDate}"
+                                                                                        month="short"
+                                                                                        day="numeric"
+                                                                                        year="numeric"
+                                                                                        hour="2-digit"
+                                                                                        minute="2-digit"
+                                                                                        second="2-digit"
+                                                                                        hour12="true"
+                                                                                        timeZone="{!$Locale.timezone}"/><br/>
+                                    <b>Survey Name</b> : <b><a onclick="{!c.redirectToSurvey}">
+                                    {!v.surveyName}
+                                    </a></b><br/>
+                                    
+                                </div>
+                                <div class ="slds-col slds-size_1-of-2">
+                                    <b>Site Name </b>	: {!v.siteName}
+                                </div>
+                            </div> 
+                        </aura:if>
+                        <aura:if isTrue = "{!v.showBlockSection}" > 
+                            <div class = "slds-grid slds-wrap">
+                                <div class ="slds-col slds-size_1-of-2">
+                                    <b> Upload Date </b> : <lightning:formattedDateTime aura:id="dt"
+                                                                                        value="{!v.uploadDate}"
+                                                                                        month="short"
+                                                                                        day="numeric"
+                                                                                        year="numeric"
+                                                                                        hour="2-digit"
+                                                                                        minute="2-digit"
+                                                                                        second="2-digit"
+                                                                                        hour12="true"
+                                                                                        timeZone="{!$Locale.timezone}"/><br/>
+                                    <b>Survey Name</b> : <a onclick="{!c.redirectToSurvey}">
+                                    {!v.surveyName}
+                                    </a><br/>
+                                </div>
+                                <div class ="slds-col slds-size_1-of-2">  
+                                    <b>Block Name </b>	: {!v.blockName}<br/>
+                                    <b>Site Name</b> 	: {!v.siteName}
+                                </div>
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue = "{!v.showLocationSection}" >  
+                            <div class = "slds-grid slds-wrap">
+                                <div class ="slds-col slds-size_1-of-2">
+                                    <b> Upload Date </b> : <lightning:formattedDateTime aura:id="dt"
+                                                                                        value="{!v.uploadDate}"
+                                                                                        month="short"
+                                                                                        day="numeric"
+                                                                                        year="numeric"
+                                                                                        hour="2-digit"
+                                                                                        minute="2-digit"
+                                                                                        second="2-digit"
+                                                                                        hour12="true"
+                                                                                        timeZone="{!$Locale.timezone}"/><br/>
+                                    <b>Survey Name</b> : <a onclick="{!c.redirectToSurvey}">
+                                    {!v.surveyName}
+                                    </a><br/>
+                                </div>
+                                <div class ="slds-col slds-size_1-of-2">
+                                    <b> Location Name </b>	: {!v.locationName}<br/>
+                                    <b> Block Name</b> 	: {!v.blockName}
+                                </div>
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue = "{!v.showAssetSection}" > 
+                            <div class = "slds-grid slds-wrap">
+                                <div class ="slds-col slds-size_1-of-2">
+                                    <b>Upload Date</b> : <lightning:formattedDateTime aura:id="dt"
+                                                                                      value="{!v.uploadDate}"
+                                                                                      month="short"
+                                                                                      day="numeric"
+                                                                                      year="numeric"
+                                                                                      hour="2-digit"
+                                                                                      minute="2-digit"
+                                                                                      second="2-digit"
+                                                                                      hour12="true"
+                                                                                      timeZone="{!$Locale.timezone}"/><br/>
+                                    <b>Survey Name</b> : <b><a onclick="{!c.redirectToSurvey}">
+                                    {!v.surveyName}
+                                    </a></b><br/>
+                                    <b>Asset Name</b> 	: {!v.assetName}<br/>
+                                </div>
+                                <div class ="slds-col slds-size_1-of-2">
+                                    <b>Location Name</b> 	: {!v.locationName}<br/>
+                                    <b>Block Name</b> 	: {!v.blockName}<br/>
+                                    <b>Site Name</b> : {!v.siteName}
+                                </div>
+                            </div>
+                        </aura:if>
+                    </aura:set>
+                </lightning:accordionSection>
+            </lightning:accordion> 
+            <div class ="slds-col slds-size_3-of-3">
+                <lightning:carousel disableAutoRefresh="false" disableAutoScroll="false">
+                    <aura:iteration items="{!v.contents}" var="content">
+                        <lightning:carouselImage
+                                                 src ="{!v.prefixURL + content.Id}"
+                                                 description = "{!v.imageComment + content.Description}">
+                        </lightning:carouselImage>            
+                    </aura:iteration>   
+                </lightning:carousel>
+            </div>
+        </div>
+    </aura:if>
+    <aura:if isTrue ="{!!v.isImageExist}">
+        <br/>
+        <b>Sorry! There are no Survey Images uploaded yet.</b>
+    </aura:if>
+</aura:component>

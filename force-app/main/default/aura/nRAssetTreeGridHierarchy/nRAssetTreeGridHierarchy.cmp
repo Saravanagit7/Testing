@@ -1,0 +1,302 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                controller="NRAssetHierarchyControllerFinal" access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false" />    
+    <aura:attribute name="assethierarchy" type="Object" access="PRIVATE"/> 
+    <aura:attribute name="isCommunity" type="Boolean" default="false"/>
+    <aura:attribute name="listOfRecordDetail" type="Object" access="PRIVATE"/> 
+    <aura:attribute name="listOfFieldApis" type="Object"/>    
+    <aura:attribute name="listOfFieldLabel" type="Object"/>    
+    <aura:attribute name="augmentedurl" type="String"/>
+    
+    <lightning:card >    
+        <lightning:workspaceAPI aura:id="workspace" />   
+        <lightning:tabset >            
+            <lightning:tab label="Asset Hierarchy">
+<div class="slds-table--header-fixed_container nopaddingtop" style="height:450px;">  
+    <div class="slds-scrollable_y" style="height:100%;">    
+                <table class="slds-table slds-table_bordered">  
+                    <thead style="height:50px;">
+                        <tr class="slds-line-height_reset">
+                            <th style="border:1px solid #d1cece;"  class="slds-cell-fixed slds-has-button-menu" scope="col">
+                                <div style="margin-left:60px;margin-top:15px;margin-bottom:15px;" >            
+                                    Name
+                                </div>
+                            </th>
+                            <aura:iteration items="{!v.listOfFieldLabel}" var="fieldLabel">
+                                <th style="border:1px solid #d1cece;text-align:center;"  class="slds-cell-fixed slds-has-button-menu slds-form-element slds-size--2-of-12 td-fixed-width" scope="col">
+                                    <div >{!fieldLabel}</div>
+                                </th>
+                            </aura:iteration> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.assethierarchy}" var="org">
+                            <tr  >
+                                <td style="padding-left:20px;" >
+                                    <div style="display: grid;grid-template-columns: 10px 300px;grid-gap: 15px;">                        
+                                        <aura:renderif isTrue="{!org.expanded}">
+                                            <aura:renderif isTrue="{!org.beforeexpand}">
+                                                <span class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!org.name}" data-labelled="{!org.label}"  onclick="{!c.getregion}"><lightning:icon class="clickable" iconName="utility:chevronright" title="Expand" size="small" /></span>                            
+                                                <div data-record="{!org.name}" data-labelled="{!org.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!org.label}</div>                                                                                                                           
+                                                <aura:set attribute="else">
+                                                    <span class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!org.name}" data-labelled="{!org.label}" onclick="{!c.getregion}"><lightning:icon iconName="utility:chevrondown" title="Expand" size="small" /></span>                                                                    
+                                                    <div data-record="{!org.name}" data-labelled="{!org.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!org.label}</div>                                                                                                                                                               
+                                                </aura:set>
+                                            </aura:renderif>
+                                            <aura:set attribute="else">
+                                                <div data-record="{!org.name}" data-labelled="{!org.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!org.label}</div>                                                                                       
+                                            </aura:set>                            
+                                        </aura:renderif>
+                                    </div>    
+                                </td>
+                                <aura:iteration items="{!v.listOfFieldApis}" var="fieldapi">
+                                    <td style="text-align:center;word-wrap: break-word;">
+                                        <c:DynamicFieldValue record="{!org.organization}" fieldName="{!fieldapi}" isImage="false"/>
+                                    </td>
+                                </aura:iteration> 
+                            </tr>
+                            <div />
+                            <aura:iteration items="{!org._children}" var="region">
+                                <tr  >
+                                    <td style="padding-left:40px;">
+                                        <div style="display: grid;grid-template-columns: 10px 300px;grid-gap: 15px;">                                                    
+                                            <aura:renderif isTrue="{!region.expanded}">
+                                                <aura:renderif isTrue="{!region.beforeexpand}">                                
+                                                    <span class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!region.name}" data-labelled="{!region.label}" onclick="{!c.getroute}"><lightning:icon iconName="utility:chevronright" title="Expand" size="small" /></span>                            
+                                                    <aura:set attribute="else">
+                                                        <span  class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!region.name}" data-labelled="{!region.label}" onclick="{!c.getroute}"><lightning:icon iconName="utility:chevrondown" title="Expand" size="small" /></span>                                                                    
+                                                        <div data-record="{!region.name}" data-labelled="{!region.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!region.label}</div>                                                                                                                                                               
+                                                    </aura:set>
+                                                    <div data-record="{!region.name}" data-labelled="{!region.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!region.label}</div>                                                                                                                           
+                                                </aura:renderif>
+                                                <aura:set attribute="else">
+                                                    <div style="padding-left:10px;cursor:pointer !important;" data-record="{!region.name}" data-labelled="{!region.label}" onclick="{!c.redirection}" >{!region.label}</div>                                                                                       
+                                                </aura:set> 
+                                            </aura:renderif>
+                                        </div>
+                                    </td>
+                                    <aura:iteration items="{!v.listOfFieldApis}" var="fieldapi">
+                                        <td style="width:30px;text-align:center;word-wrap:break-word !important;">
+                                            <c:DynamicFieldValue record="{!region.regionrouteport}" fieldName="{!fieldapi}" isImage="false"/>
+                                        </td>
+                                    </aura:iteration>                        
+                                </tr>
+                                <aura:iteration items="{!region._children}" var="route">
+                                    <tr  aria-level="3">
+                                        <td style="padding-left:55px;">
+                                            <div style="display: grid;grid-template-columns: 10px 300px;grid-gap: 15px;">                                                        
+                                                <aura:renderif isTrue="{!route.expanded}">
+                                                    <aura:renderif isTrue="{!route.beforeexpand}">                                                                    
+                                                        <span class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!route.name}" data-labelled="{!route.label}" onclick="{!c.getportfolio}"><lightning:icon iconName="utility:chevronright" title="Expand" size="small" /></span>                            
+                                                        <div data-record="{!route.name}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!route.label}</div>                                                                                                                           
+                                                        
+                                                        <aura:set attribute="else">
+                                                            <span class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!route.name}" data-labelled="{!route.label}" onclick="{!c.getportfolio}"><lightning:icon iconName="utility:chevrondown" title="Expand" size="small" /></span>                                                                    
+                                                            <div data-record="{!route.name}" data-labelled="{!route.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!route.label}</div>  
+                                                        </aura:set>
+                                                    </aura:renderif>
+                                                    <aura:set attribute="else">                                    
+                                                        <div class="clickable" style="padding-left:55px;cursor:pointer !important;" data-record="{!route.name}" data-labelled="{!route.label}" onclick="{!c.redirection}">
+                                                            {!route.label}
+                                                        </div>
+                                                    </aura:set>
+                                                </aura:renderif>
+                                            </div>
+                                        </td>
+                                        <aura:iteration items="{!v.listOfFieldApis}" var="fieldapi">
+                                            <td style="text-align:center;word-wrap: break-word;">
+                                                <c:DynamicFieldValue record="{!route.regionrouteport}" fieldName="{!fieldapi}" isImage="false"/>
+                                            </td>
+                                        </aura:iteration>  
+                                    </tr>
+                                    <aura:iteration items="{!route._children}" var="portfolio">
+                                        <tr >
+                                            <td style="padding-left:70px;">
+                                                <div style="display: grid;grid-template-columns: 10px 300px;grid-gap: 15px;">                                                    
+                                                    <aura:renderif isTrue="{!portfolio.expanded}">
+                                                        <aura:renderif isTrue="{!portfolio.beforeexpand}">                                
+                                                            <span class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!portfolio.name}" data-labelled="{!portfolio.label}" onclick="{!c.getSites}"><lightning:icon iconName="utility:chevronright" title="Expand" size="small" /></span>                            
+                                                            <div data-record="{!portfolio.name}" data-labelled="{!portfolio.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!portfolio.label}</div>                                                                                                                           
+                                                            
+                                                            <aura:set attribute="else">
+                                                                <span class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!portfolio.name}" data-labelled="{!portfolio.label}" onclick="{!c.getSites}"><lightning:icon iconName="utility:chevrondown" title="Expand" size="small" /></span>                                                                    
+                                                                <div data-record="{!portfolio.name}" data-labelled="{!portfolio.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!portfolio.label}</div>  
+                                                            </aura:set>
+                                                        </aura:renderif>
+                                                        <aura:set attribute="else">                                
+                                                            <div class="clickable" style="padding-left:20px;cursor:pointer !important;"  data-record="{!portfolio.name}" data-labelled="{!portfolio.label}" onclick="{!c.redirection}">
+                                                                {!portfolio.label}
+                                                            </div>
+                                                        </aura:set>
+                                                    </aura:renderif>
+                                                </div>
+                                            </td>
+                                            <aura:iteration items="{!v.listOfFieldApis}" var="fieldapi">
+                                                <td style="text-align:center;word-wrap: break-word;">
+                                                    <c:DynamicFieldValue record="{!portfolio.regionrouteport}" fieldName="{!fieldapi}" isImage="false"/>
+                                                </td>
+                                            </aura:iteration>
+                                        </tr>
+                                        <aura:iteration items="{!portfolio._children}" var="site">
+                                            <tr >
+                                                <td style="padding-left:85px;" >
+                                                    <div style="display: grid;grid-template-columns: 10px 300px;grid-gap: 15px;">                        
+                                                        
+                                                        <aura:renderif isTrue="{!site.expanded}">
+                                                            <aura:renderif isTrue="{!site.beforeexpand}">                                                                    
+                                                                <span class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!site.name}" data-labelled="{!site.label}" onclick="{!c.callchild}"><lightning:icon iconName="utility:chevronright" title="Expand" size="small" /></span>                            
+                                                                <div data-record="{!site.name}" data-labelled="{!site.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!site.label}</div>                                                                                                                           
+                                                                
+                                                                <aura:set attribute="else">
+                                                                    <span class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!site.name}" data-labelled="{!site.label}" onclick="{!c.callchild}"><lightning:icon iconName="utility:chevrondown" title="Expand" size="small" /></span>                                                                    
+                                                                    <div data-record="{!site.name}" data-labelled="{!site.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!site.label}</div>  
+                                                                </aura:set>
+                                                            </aura:renderif>
+                                                            <aura:set attribute="else">                                    
+                                                                <div class="clickable" style="padding-left:20px;cursor:pointer !important;" data-record="{!site.name}" data-labelled="{!site.label}" onclick="{!c.redirection}">
+                                                                    {!site.label}
+                                                                </div>
+                                                            </aura:set>
+                                                        </aura:renderif>
+                                                    </div>
+                                                </td>
+                                                <aura:iteration items="{!v.listOfFieldApis}" var="fieldapi">
+                                                    <td style="width:30px;text-align:center;word-wrap: break-word !important;" class="slds-cell-wrap">
+                                                        <c:DynamicFieldValue record="{!site.siteToAssets}" fieldName="{!fieldapi}" isImage="true"/>
+                                                    </td>
+                                                </aura:iteration>
+                                            </tr> 
+                                            
+                                            <aura:iteration items="{!site._children}" var="grandchildchild1">
+                                                <tr >
+                                                    <td style="padding-left:100px;">
+                                                        <div style="display: grid;grid-template-columns: 10px 300px;grid-gap: 15px;">                                                    
+                                                            <aura:renderif isTrue="{!grandchildchild1.expanded}">
+                                                                <aura:renderif isTrue="{!grandchildchild1.beforeexpand}">                                
+                                                                    <span class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!grandchildchild1.name}" data-labelled="{!grandchildchild1.label}" onclick="{!c.callchild}"><lightning:icon iconName="utility:chevronright" title="Expand" size="small" /></span>                            
+                                                                    <div data-record="{!grandchildchild1.name}"  data-labelled="{!grandchildchild1.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!grandchildchild1.label}</div>                                                                                                                           
+                                                                    
+                                                                    <aura:set attribute="else">
+                                                                        <span class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!grandchildchild1.name}" data-labelled="{!grandchildchild1.label}" onclick="{!c.callchild}"><lightning:icon iconName="utility:chevrondown" title="Expand" size="small" /></span>                                                                    
+                                                                        <div data-record="{!grandchildchild1.name}" data-labelled="{!grandchildchild1.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!grandchildchild1.label}</div>  
+                                                                    </aura:set>
+                                                                </aura:renderif>
+                                                                <aura:set attribute="else">                                
+                                                                    <div class="clickable" style="padding-left:20px;cursor:pointer !important;" data-labelled="{!grandchildchild1.label}" data-record="{!grandchildchild1.name}" onclick="{!c.redirection}">
+                                                                        {!grandchildchild1.label}
+                                                                    </div>
+                                                                </aura:set>
+                                                            </aura:renderif>
+                                                        </div>
+                                                    </td>
+                                                    <aura:iteration items="{!v.listOfFieldApis}" var="fieldapi">
+                                                        <td style="width:30px;text-align:center;word-wrap: break-word !important;" class="slds-cell-wrap slds-cell-shrink">
+                                                            <c:DynamicFieldValue record="{!grandchildchild1.siteToAssets}" fieldName="{!fieldapi}" isImage="true"/>
+                                                        </td>
+                                                    </aura:iteration>
+                                                </tr>
+                                                <aura:iteration items="{!grandchildchild1._children}" var="grandchildchild2">
+                                                    <tr >
+                                                        <td style="padding-left:115px;" >
+                                                            <div style="display: grid;grid-template-columns: 10px 300px;grid-gap: 15px;">                        
+                                                                
+                                                                <aura:renderif isTrue="{!grandchildchild2.expanded}">
+                                                                    <aura:renderif isTrue="{!grandchildchild2.beforeexpand}">                                                                    
+                                                                        <span class="clickable" style="width:10%;cursor:pointer !important;" data-record="{!grandchildchild2.name}" data-labelled="{!grandchildchild2.label}"  onclick="{!c.callchild}"><lightning:icon iconName="utility:chevronright" title="Expand" size="small" /></span>                            
+                                                                        <div data-record="{!grandchildchild2.name}" data-labelled="{!grandchildchild2.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!grandchildchild2.label}</div>                                                                                                                           
+                                                                        
+                                                                        <aura:set attribute="else">
+                                                                            <span class="clickable" style="width:10%;cursor:pointer !important;" data-labelled="{!grandchildchild2.label}" data-record="{!grandchildchild2.name}" onclick="{!c.callchild}"><lightning:icon iconName="utility:chevrondown" title="Expand" size="small" /></span>                                                                    
+                                                                            <div data-record="{!grandchildchild2.name}" data-labelled="{!grandchildchild2.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!grandchildchild2.label}</div>  
+                                                                        </aura:set>
+                                                                    </aura:renderif>
+                                                                    <aura:set attribute="else">                                    
+                                                                        <div class="clickable" style="padding-left:20px;cursor:pointer !important;" data-record="{!grandchildchild2.name}" data-labelled="{!grandchildchild2.label}" onclick="{!c.redirection}">
+                                                                            {!grandchildchild2.label}
+                                                                        </div>
+                                                                    </aura:set>
+                                                                </aura:renderif>
+                                                            </div>
+                                                        </td>
+                                                        <aura:iteration items="{!v.listOfFieldApis}" var="fieldapi">
+                                                            <td style="text-align:center;word-wrap: break-word;">
+                                                                <c:DynamicFieldValue record="{!grandchildchild2.siteToAssets}" fieldName="{!fieldapi}"/>
+                                                            </td>
+                                                        </aura:iteration>
+                                                    </tr> 
+                                                    <aura:iteration items="{!grandchildchild2._children}" var="grandchildchild3">
+                                                        <tr >
+                                                            <td style="padding-left:130px;" >
+                                                                <div style="display: grid;grid-template-columns: 10px 300px;grid-gap: 15px;">                        
+                                                                    
+                                                                    <aura:renderif isTrue="{!grandchildchild3.expanded}">
+                                                                        <aura:renderif isTrue="{!grandchildchild3.beforeexpand}">                                                                    
+                                                                            <span class="clickable" style="width:10%;cursor:pointer !important;" data-labelled="{!grandchildchild3.label}" data-record="{!grandchildchild3.name}" onclick="{!c.callchild}"><lightning:icon iconName="utility:chevronright" title="Expand" size="small" /></span>                            
+                                                                            <div data-record="{!grandchildchild3.name}" data-labelled="{!grandchildchild3.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!grandchildchild3.label}</div>                                                                                                                           
+                                                                            
+                                                                            <aura:set attribute="else">
+                                                                                <span class="clickable" style="width:10%;cursor:pointer !important;" data-labelled="{!grandchildchild3.label}" data-record="{!grandchildchild3.name}" onclick="{!c.callchild}"><lightning:icon iconName="utility:chevrondown" title="Expand" size="small" /></span>                                                                    
+                                                                                <div data-record="{!grandchildchild3.name}" data-labelled="{!grandchildchild3.label}" onclick="{!c.redirection}" style="width:90%;cursor:pointer !important;" class="slds-truncate clickable">{!grandchildchild3.label}</div>  
+                                                                            </aura:set>
+                                                                        </aura:renderif>
+                                                                        <aura:set attribute="else">                                    
+                                                                            <div class="clickable" style="padding-left:20px;cursor:pointer !important;" data-labelled="{!grandchildchild3.label}" data-record="{!grandchildchild3.name}" onclick="{!c.redirection}">
+                                                                                {!grandchildchild3.label}
+                                                                            </div>
+                                                                        </aura:set>
+                                                                    </aura:renderif>
+                                                                </div>
+                                                            </td>
+                                                            <aura:iteration items="{!v.listOfFieldApis}" var="fieldapi">
+                                                                <td style="text-align:center;word-wrap: break-word;">
+                                                                    <c:DynamicFieldValue record="{!grandchildchild3.siteToAssets}" fieldName="{!fieldapi}"/>
+                                                                </td>
+                                                            </aura:iteration>
+                                                        </tr> 
+                                                    </aura:iteration>
+                                                </aura:iteration>
+                                            </aura:iteration>
+                                        </aura:iteration>
+                                    </aura:iteration>
+                                    
+                                </aura:iteration>
+                            </aura:iteration>
+                            </aura:iteration>  
+                    </tbody>
+                </table>
+                </div>
+                </div>
+            </lightning:tab>
+            <aura:iteration items="{!v.listOfRecordDetail}" var="detail">            
+                
+                <lightning:tab  label="{!detail.label}" aura:id="{!detail.name}" id="{!detail.name}" >
+                    <lightning:tabset>
+                        <lightning:tab label="Details">
+                            <lightning:recordForm
+                                                  recordId="{!detail.name}"
+                                                  objectApiName="Asset"
+                                                  layoutType="Full"
+                                                  columns="2"
+                                                  mode="edit" />
+                        </lightning:tab>
+                        <lightning:tab label="Augmented View">
+                            <iframe title="A 3D model" width="640" height="480"  src ="{!v.augmentedurl}" frameborder="0" allow="autoplay; fullscreen; vr" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+                        </lightning:tab>
+                        <lightning:tab label="Asset Imagery View">
+                            <c:NR_AssetImagery recordId="{!detail.name}"/>
+                        </lightning:tab>
+                        <!--<lightning:tab>
+                            visualforce.com/apex/AssetDetailPage?id=02i3L000000I4h5QAC
+                        </lightning:tab>-->
+                    </lightning:tabset>
+                    
+                </lightning:tab>
+            </aura:iteration>
+        </lightning:tabset>
+        
+    </lightning:card>
+    
+    
+    
+</aura:component>

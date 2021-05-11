@@ -1,0 +1,5 @@
+<aura:component controller="NR_RelatedListController">
+    <aura:attribute name="record" type="String"/>
+    <aura:attribute name="listOfRelatedList" type="Object[]"/>
+    <aura:handler name="init" action="{!c.doInit}" value="this"/>
+</aura:component>
